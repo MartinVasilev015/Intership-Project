@@ -1,18 +1,22 @@
 package bank.businesslogic;
 import java.util.ArrayList;
 import java.util.Random;
-
 import bank.entities.Bill;
 import bank.entities.Merchant;
 import bank.entities.Payment;
 import bank.entities.Transaction;
+import bank.entities.getMerchantResponseEntity;
+import bank.exceptions.CustomException;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class BankManager
 {	
 	Random r = new Random();
 	
-	public ArrayList<Merchant> getMerchantsData()
+	public getMerchantResponseEntity getMerchantsData()
 	{
+		log.debug("Preparing to get all merchants");
 		ArrayList<Merchant> merchants = new ArrayList<Merchant>();
 		
 		merchants.add(new Merchant(
@@ -61,24 +65,28 @@ public class BankManager
 				+ "Срок за плащане чрез ePay.bg - до издължаване на абоната. Срокът за безлихвено плащане\r\n"
 				+ "е отбелязан във фактурата от Софийска вода",
 				"^\\d{7}$",
-				">Клиентски номер - 7 цифри"
+				"Клиентски номер - 7 цифри"
 				));
-		return merchants;
+		
+		log.debug("Returning list of merchants");
+		return new getMerchantResponseEntity(merchants);
 	}
 	
-	public Bill checkBill(String merchantId, String subscrNumber) 
+	public Bill checkBill(String merchantId, String subscrNumber) throws CustomException 
 	{
 		Bill result = new Bill();
 
 		int chance = r.nextInt(100);
 		
+		log.debug("Getting a random bill");
+		
 		setValues(result, chance);
-
+		
 		return result;
 	}
 	
 	public Transaction checkBillBlocked(String transactionId,
-			String dateTime, String merchatId, String subscrNumber)
+			String dateTime, String merchatId, String subscrNumber) throws CustomException
 	{
 		Transaction result = new Transaction();
 		
@@ -89,7 +97,7 @@ public class BankManager
 		return result;
 	}
 
-	private void setValues(Payment p, int chance)
+	private void setValues(Payment p, int chance) throws CustomException
 	{
 		if(chance >= 20) 
 		{
@@ -97,13 +105,13 @@ public class BankManager
 			p.setShortDesc("OK");
 			p.setAmount(1000);
 			
-			if(p.getClass().getName().equals("Bill"))
+			if(p instanceof Bill)
 			{
 				((Bill)p).setValidTo("20103011");
 				((Bill)p).setSecondId("1234567890");
 				
 			}
-			else if(p.getClass().getName().equals("Transaction")) 
+			else if(p instanceof Transaction) 
 			{
 				((Transaction)p).setFee(10);
 				((Transaction)p).setTotal(p.getAmount() + ((Transaction)p).getFee());
@@ -111,25 +119,15 @@ public class BankManager
 		}
 		else if(chance >= 10 && chance < 20) 
 		{
-			p.setStatus("62");
-			p.setShortDesc("в момента нямате задължение");
+			throw new CustomException("62,No obligations");
 		}
 		else 
 		{
-			p.setStatus("96");
-			p.setShortDesc("обща грешка");
+			throw new CustomException("96,Common error");
 		}
 	}
 
-	private Payment invalidFormat()
-	{
-		Payment p = new Payment();
-		p.setStatus("805");
-		p.setShortDesc("невалиден формат");
-		return p;
-	}
-		
-	public Payment checkBillForPay(Transaction t, String amount)
+	public Payment checkBillForPay(Transaction t, String amount) throws CustomException
 	{		
 		Transaction result = new Transaction();
 		
@@ -146,40 +144,34 @@ public class BankManager
 			return t;
 		}
 		
-		try
-		{ 
-			amountInt = Integer.parseInt(amount);
-		} 
-		catch (Exception e)
-		{
-			return invalidFormat();
-		}
+		amountInt = Integer.parseInt(amount);
 		
 		int chance = r.nextInt(100);
 		
-		if (t.getTotal() <= amountInt && chance >= 50)
+		if(t.getTotal() != null) 
 		{
-			result.setStatus("00");
-			result.setShortDesc("OK");
+			if (t.getTotal() <= amountInt && chance >= 50)
+			{
+				result.setStatus("00");
+				result.setShortDesc("OK");
+			}
+			else if(t.getTotal() <= amountInt && chance < 50) 
+			{
+				throw new CustomException("96,Common error");
+			}
+			else if(t.getTotal() > amountInt) 
+			{
+				throw new CustomException("13,Invalid sum");
+			}
 		}
-		else if(t.getTotal() <= amountInt && chance < 50) 
-		{
-			result.setStatus("96");
-			result.setShortDesc("обща грешка");
-		}
-		else if(t.getTotal() > amountInt) 
-		{
-			result.setStatus("13");
-			result.setShortDesc("невалидна сума");
-		}
-		
+				
 		return result;
 	}
 
 	public Payment checkDeposit(String transactionId, String dateTime, 
-			String amount, String merchatId, String subscrNumber)
+			String amount, String merchantId, String subscrNumber) throws CustomException
 	{
-		Transaction t = checkBillBlocked(transactionId, dateTime, merchatId, subscrNumber);
+		Transaction t = checkBillBlocked(transactionId, dateTime, merchantId, subscrNumber);
 		
 		Integer amountInt;
 		
@@ -188,17 +180,13 @@ public class BankManager
 			return t;
 		}
 		
-		try
+		if(amount != null && t.getFee() != null)
 		{
 			amountInt = Integer.parseInt(amount);
 			t.setAmount(amountInt);
-		} 
-		catch (Exception e)
-		{	
-			return invalidFormat();
+			t.setTotal(t.getFee() + t.getAmount());	
 		}
-		
-		t.setTotal(t.getFee() + t.getAmount());
+	
 		return t;
 	}
 }

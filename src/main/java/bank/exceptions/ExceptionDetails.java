@@ -1,6 +1,6 @@
 package bank.exceptions;
-import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -13,7 +13,9 @@ import lombok.NoArgsConstructor;
 @JsonInclude(Include.NON_NULL)
 public class ExceptionDetails
 {
-	private String message;
-	private Date date;
-	private String details;
+	@JsonProperty("error_code")
+	private String errorCode;
+	
+	@JsonProperty("error_des")
+	private String errorDescription;
 }

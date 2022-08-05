@@ -1,4 +1,5 @@
 package bank.entities;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,19 +11,50 @@ import lombok.NoArgsConstructor;
 
 public class Merchant
 {
-	private String merchantId;   
-	private String fullName;            
-	private String fullNameEn;         
-	private String webName;             
-	private String subscrNumberType;    
-	private boolean active;               
-	private int category;             
-	private String categoryName;         
-	private int merchantType;         
-	private boolean merchantPartial;     
-	private boolean merchantInvoice;    
-	private String merchantShortDesc;   
+	@JsonProperty("merchant_id")
+	private String merchantId;
+	
+	@JsonProperty("full_name")
+	private String fullName; 
+	
+	@JsonProperty("full_name_en")
+	private String fullNameEn;  
+	
+	@JsonProperty("web_name")
+	private String webName; 
+	
+	@JsonProperty("subscr_number_type")		
+	private String subscrNumberType;   
+	
+	@JsonProperty("active")	
+	private boolean active;      
+	
+	@JsonProperty("category")	
+	private int category;  
+	
+	@JsonProperty("category_name")	
+	private String categoryName;
+	
+	@JsonProperty("merchant_type")	
+	private int merchantType;   
+	
+	@JsonProperty("merchant_partial")	
+	private boolean merchantPartial; 
+	
+	@JsonProperty("merchant_invoice")	
+	private boolean merchantInvoice; 
+	
+	@JsonProperty("merchant_short_desc")	
+	private String merchantShortDesc; 
+	
+	@JsonProperty("merchant_long_desc")	
 	private String merchantLongDesc;   
+	
+	@JsonProperty("subscr_number_re")	
 	private String subscrNumberRe;   
+	
+	@JsonProperty("subscr_number_re_help")	
 	private String subscrNumberReHelp;	
 }
+
+//custom names in response (in docs)
