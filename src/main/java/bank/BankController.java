@@ -3,7 +3,7 @@ import org.springframework.http.MediaType;
 import java.util.ArrayList;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import bank.businesslogic.BankManager;
@@ -27,29 +27,29 @@ public class BankController
 	
 	@PostMapping()
 	public Bill checkBill(
-			@RequestHeader(value="merchant_id") String merchatId,
-			@RequestHeader(value="subscr_number") String subscrNumber)
+			@RequestBody String merchatId, 
+			@RequestBody String subscrNumber)
 	{
 		return bm.checkBill(merchatId, subscrNumber);
 	}
 	
 	@PostMapping("/blocked")
 	public Payment checkBillBlocked(
-			@RequestHeader(value="transaction_id") String transactionId,
-			@RequestHeader(value="dt") String dateTime,
-			@RequestHeader(value="merchant_id") String merchatId,
-			@RequestHeader(value="subscr_number") String subscrNumber)
+			@RequestBody String transactionId, 
+			@RequestBody String dateTime,
+			@RequestBody String merchatId,
+			@RequestBody String subscrNumber)
 	{
 		return bm.checkBillBlocked(transactionId, dateTime, merchatId, subscrNumber);
 	}
 	
 	@PostMapping("/pay")
 	public Payment payBill(
-			@RequestHeader(value="transaction_id") String transactionId,
-			@RequestHeader(value="dt") String dateTime,
-			@RequestHeader(value="amount") String amount,
-			@RequestHeader(value="merchant_id") String merchatId,
-			@RequestHeader(value="subscr_number") String subscrNumber)
+			@RequestBody String transactionId, 
+			@RequestBody String dateTime,
+			@RequestBody String merchatId,
+			@RequestBody String amount,
+			@RequestBody String subscrNumber)
 	{
 		Transaction t =  bm.checkBillBlocked(transactionId, dateTime, merchatId, subscrNumber);
 		
@@ -58,44 +58,44 @@ public class BankController
 	
 	@PostMapping("/reverse")
 	public Payment reverseBill(
-			@RequestHeader(value="transaction_id") String transactionId,
-			@RequestHeader(value="dt") String dateTime,
-			@RequestHeader(value="amount") String amount,
-			@RequestHeader(value="merchant_id") String merchatId,
-			@RequestHeader(value="subscr_number") String subscrNumber)
+			@RequestBody String transactionId, 
+			@RequestBody String dateTime,
+			@RequestBody String merchatId,
+			@RequestBody String amount,
+			@RequestBody String subscrNumber)
 	{
 		return payBill(transactionId, dateTime, amount, merchatId, subscrNumber);
 	}
 	
 	@PostMapping("/deposit")
 	public Payment checkDeposit(
-			@RequestHeader(value="transaction_id") String transactionId,
-			@RequestHeader(value="dt") String dateTime,
-			@RequestHeader(value="amount") String amount,
-			@RequestHeader(value="merchant_id") String merchatId,
-			@RequestHeader(value="subscr_number") String subscrNumber)
+			@RequestBody String transactionId, 
+			@RequestBody String dateTime,
+			@RequestBody String merchatId,
+			@RequestBody String amount,
+			@RequestBody String subscrNumber)
 	{
 		return bm.checkDeposit(transactionId, dateTime, amount, merchatId, subscrNumber);
 	}
 	
 	@PostMapping("/pay/deposit")
 	public Payment payDeposit(
-			@RequestHeader(value="transaction_id") String transactionId,
-			@RequestHeader(value="dt") String dateTime,
-			@RequestHeader(value="amount") String amount,
-			@RequestHeader(value="merchant_id") String merchatId,
-			@RequestHeader(value="subscr_number") String subscrNumber)
+			@RequestBody String transactionId, 
+			@RequestBody String dateTime,
+			@RequestBody String merchatId,
+			@RequestBody String amount,
+			@RequestBody String subscrNumber)
 	{
 		return payBill(transactionId, dateTime, amount, merchatId, subscrNumber);
 	}
 	
 	@PostMapping("/deposit/reverse")
 	public Payment reverseDeposit(
-			@RequestHeader(value="transaction_id") String transactionId,
-			@RequestHeader(value="dt") String dateTime,
-			@RequestHeader(value="amount") String amount,
-			@RequestHeader(value="merchant_id") String merchatId,
-			@RequestHeader(value="subscr_number") String subscrNumber)
+			@RequestBody String transactionId, 
+			@RequestBody String dateTime,
+			@RequestBody String merchatId,
+			@RequestBody String amount,
+			@RequestBody String subscrNumber)
 	{
 		return payBill(transactionId, dateTime, amount, merchatId, subscrNumber);
 	}

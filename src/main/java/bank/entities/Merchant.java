@@ -10,19 +10,19 @@ import lombok.NoArgsConstructor;
 
 public class Merchant
 {
-	private String merchant_id;   
-	private String full_name;            
-	private String full_name_en;         
-	private String web_name;             
-	private String subscr_number_type;    
+	private String merchantId;   
+	private String fullName;            
+	private String fullNameEn;         
+	private String webName;             
+	private String subscrNumberType;    
 	private boolean active;               
 	private int category;             
-	private String category_name;         
-	private int merchant_type;         
-	private boolean merchant_partial;     
-	private boolean merchant_invoice;    
-	private String merchant_short_desc;   
-	private String merchant_long_desc;   
-	private String subscr_number_re;   
-	private String subscr_number_re_help;	
+	private String categoryName;         
+	private int merchantType;         
+	private boolean merchantPartial;     
+	private boolean merchantInvoice;    
+	private String merchantShortDesc;   
+	private String merchantLongDesc;   
+	private String subscrNumberRe;   
+	private String subscrNumberReHelp;	
 }
